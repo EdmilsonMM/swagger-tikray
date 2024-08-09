@@ -1,718 +1,4818 @@
----
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: "This is a sample server Petstore server.  You can find out more about\
-    \ Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).\
-    \  For this sample, you can use the api key `special-key` to test the authorization\
-    \ filters."
-  version: "1.0.5"
-  title: "Swagger Petstore"
-  termsOfService: "http://swagger.io/terms/"
-  contact:
-    email: "apiteam@swagger.io"
-  license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "petstore.swagger.io"
-basePath: "/v2"
-tags:
-- name: "pet"
-  description: "Everything about your Pets"
-  externalDocs:
-    description: "Find out more"
-    url: "http://swagger.io"
-- name: "store"
-  description: "Access to Petstore orders"
-- name: "user"
-  description: "Operations about user"
-  externalDocs:
-    description: "Find out more about our store"
-    url: "http://swagger.io"
+  contact: {}
+  description: Tikray Interpreter is a middleware that facilitates the integration of ecommerce platforms with VTEX, streamlining the exchange of data and enhancing operational efficiency. This tool simplifies the synchronization of product listings, orders, and inventory between systems.
+  title: Tikray Interpreter Doc
+  version: 1.0.0
+host: interpreter-dev.mytikray.com
+basePath: /
 schemes:
-- "https"
-- "http"
+  - https
 paths:
-  /pet/{petId}/uploadImage:
-    post:
-      tags:
-      - "pet"
-      summary: "uploads an image"
-      description: ""
-      operationId: "uploadFile"
-      consumes:
-      - "multipart/form-data"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to update"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "additionalMetadata"
-        in: "formData"
-        description: "Additional data to pass to server"
-        required: false
-        type: "string"
-      - name: "file"
-        in: "formData"
-        description: "file to upload"
-        required: false
-        type: "file"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/ApiResponse"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet:
-    post:
-      tags:
-      - "pet"
-      summary: "Add a new pet to the store"
-      description: ""
-      operationId: "addPet"
-      consumes:
-      - "application/json"
-      - "application/xml"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Pet object that needs to be added to the store"
-        required: true
-        schema:
-          $ref: "#/definitions/Pet"
-      responses:
-        405:
-          description: "Invalid input"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-    put:
-      tags:
-      - "pet"
-      summary: "Update an existing pet"
-      description: ""
-      operationId: "updatePet"
-      consumes:
-      - "application/json"
-      - "application/xml"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Pet object that needs to be added to the store"
-        required: true
-        schema:
-          $ref: "#/definitions/Pet"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-        405:
-          description: "Validation exception"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByStatus:
+  /brands:
     get:
-      tags:
-      - "pet"
-      summary: "Finds Pets by status"
-      description: "Multiple status values can be provided with comma separated strings"
-      operationId: "findPetsByStatus"
       produces:
-      - "application/json"
-      - "application/xml"
+        - application/json
       parameters:
-      - name: "status"
-        in: "query"
-        description: "Status values that need to be considered for filter"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-          enum:
-          - "available"
-          - "pending"
-          - "sold"
-          default: "available"
-        collectionFormat: "multi"
+        - in: header
+          name: account
+          type: string
+        - in: header
+          name: origin
+          type: string
       responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid status value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByTags:
-    get:
-      tags:
-      - "pet"
-      summary: "Finds Pets by tags"
-      description: "Multiple tags can be provided with comma separated strings. Use\
-        \ tag1, tag2, tag3 for testing."
-      operationId: "findPetsByTags"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "tags"
-        in: "query"
-        description: "Tags to filter by"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-        collectionFormat: "multi"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid tag value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-      deprecated: true
-  /pet/{petId}:
-    get:
-      tags:
-      - "pet"
-      summary: "Find pet by ID"
-      description: "Returns a single pet"
-      operationId: "getPetById"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to return"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-      security:
-      - api_key: []
-    post:
-      tags:
-      - "pet"
-      summary: "Updates a pet in the store with form data"
-      description: ""
-      operationId: "updatePetWithForm"
-      consumes:
-      - "application/x-www-form-urlencoded"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet that needs to be updated"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "name"
-        in: "formData"
-        description: "Updated name of the pet"
-        required: false
-        type: "string"
-      - name: "status"
-        in: "formData"
-        description: "Updated status of the pet"
-        required: false
-        type: "string"
-      responses:
-        405:
-          description: "Invalid input"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-    delete:
-      tags:
-      - "pet"
-      summary: "Deletes a pet"
-      description: ""
-      operationId: "deletePet"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "api_key"
-        in: "header"
-        required: false
-        type: "string"
-      - name: "petId"
-        in: "path"
-        description: "Pet id to delete"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /store/order:
-    post:
-      tags:
-      - "store"
-      summary: "Place an order for a pet"
-      description: ""
-      operationId: "placeOrder"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "order placed for purchasing the pet"
-        required: true
-        schema:
-          $ref: "#/definitions/Order"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Order"
-        400:
-          description: "Invalid Order"
-  /store/order/{orderId}:
-    get:
-      tags:
-      - "store"
-      summary: "Find purchase order by ID"
-      description: "For valid response try integer IDs with value >= 1 and <= 10.\
-        \ Other values will generated exceptions"
-      operationId: "getOrderById"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "orderId"
-        in: "path"
-        description: "ID of pet that needs to be fetched"
-        required: true
-        type: "integer"
-        maximum: 10
-        minimum: 1
-        format: "int64"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Order"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Order not found"
-    delete:
-      tags:
-      - "store"
-      summary: "Delete purchase order by ID"
-      description: "For valid response try integer IDs with positive integer value.\
-        \ Negative or non-integer values will generate API errors"
-      operationId: "deleteOrder"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "orderId"
-        in: "path"
-        description: "ID of the order that needs to be deleted"
-        required: true
-        type: "integer"
-        minimum: 1
-        format: "int64"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Order not found"
-  /store/inventory:
-    get:
-      tags:
-      - "store"
-      summary: "Returns pet inventories by status"
-      description: "Returns a map of status codes to quantities"
-      operationId: "getInventory"
-      produces:
-      - "application/json"
-      parameters: []
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "object"
-            additionalProperties:
-              type: "integer"
-              format: "int32"
-      security:
-      - api_key: []
-  /user/createWithArray:
-    post:
-      tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithArrayInput"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
-        required: true
-        schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/createWithList:
-    post:
-      tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithListInput"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
-        required: true
-        schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/{username}:
-    get:
-      tags:
-      - "user"
-      summary: "Get user by user name"
-      description: ""
-      operationId: "getUserByName"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "The name that needs to be fetched. Use user1 for testing. "
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/User"
-        400:
-          description: "Invalid username supplied"
-        404:
-          description: "User not found"
-    put:
-      tags:
-      - "user"
-      summary: "Updated user"
-      description: "This can only be done by the logged in user."
-      operationId: "updateUser"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "name that need to be updated"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Updated user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
-      responses:
-        400:
-          description: "Invalid user supplied"
-        404:
-          description: "User not found"
-    delete:
-      tags:
-      - "user"
-      summary: "Delete user"
-      description: "This can only be done by the logged in user."
-      operationId: "deleteUser"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "The name that needs to be deleted"
-        required: true
-        type: "string"
-      responses:
-        400:
-          description: "Invalid username supplied"
-        404:
-          description: "User not found"
-  /user/login:
-    get:
-      tags:
-      - "user"
-      summary: "Logs user into the system"
-      description: ""
-      operationId: "loginUser"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "query"
-        description: "The user name for login"
-        required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "successful operation"
+        '200':
+          description: getBrands-200
           headers:
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
           schema:
-            type: "string"
-        400:
-          description: "Invalid username/password supplied"
-  /user/logout:
-    get:
+            properties:
+              data:
+                properties:
+                  brands:
+                    example:
+                      - id: 1
+                        isActive: true
+                        name: HONDA
+                      - id: 107
+                        isActive: true
+                        name: Heathcote - Grimes
+                      - id: 254
+                        isActive: true
+                        name: Ergonomic Wooden Pants
+                      - id: 274
+                        isActive: true
+                        name: Farrell - Farrell
+                      - id: 550
+                        isActive: true
+                        name: Weimann - Frami
+                      - id: 569
+                        isActive: true
+                        name: Boehm, Ernser and Shanahan
+                      - id: 609
+                        isActive: false
+                        name: Practical Metal Shirt
+                      - id: 610
+                        isActive: true
+                        name: Handmader Frozen Cheese
+                      - id: 611
+                        isActive: true
+                        name: Handmader Frozen Cheese
+                      - id: 612
+                        isActive: false
+                        name: Small Rubber Bacon
+                      - id: 613
+                        isActive: true
+                        name: Handmader Frozen Cheese
+                      - id: 616
+                        isActive: true
+                        name: Rustic Frozen Cheese
+                      - id: 636
+                        isActive: false
+                        name: Unbranded Steel Fish
+                      - id: 639
+                        isActive: false
+                        name: Generic Frozen Pants
+                      - id: 667
+                        isActive: false
+                        name: Small Rubber Car
+                      - id: 689
+                        isActive: true
+                        name: Intelligent Plastic Chicken
+                      - id: 691
+                        isActive: false
+                        name: Intelligent Soft Cheese
+                      - id: 700
+                        isActive: true
+                        name: Satterfield Group
+                      - id: 703
+                        isActive: false
+                        name: Tasty Cotton Gloves
+                      - id: 722
+                        isActive: true
+                        name: Rogahn Inc
+                      - id: 785
+                        isActive: true
+                        name: Intelligent Concrete Salad
+                      - id: 872
+                        isActive: false
+                        name: Practical Metal Computer
+                      - id: 883
+                        isActive: false
+                        name: Handmade Metal Chips
+                      - id: 905
+                        isActive: true
+                        name: Fantastic Fresh Chicken
+                      - id: 956
+                        isActive: true
+                        name: Handmade Wooden Bacon
+                      - id: 999
+                        isActive: true
+                        name: Hickle Group
+                      - id: 4587
+                        isActive: true
+                        name: Marca 1233
+                      - id: 6001
+                        isActive: false
+                        name: Vainsa
+                      - id: 6002
+                        isActive: false
+                        name: Italgrif
+                      - id: 6003
+                        isActive: false
+                        name: Amancaes
+                      - id: 6050
+                        isActive: false
+                        name: VainsaPe
+                      - id: 9995
+                        isActive: false
+                        name: VAINSA PE 9995
+                      - id: 9998
+                        isActive: false
+                        name: Vainsa Pe 9998
+                      - id: 9999
+                        isActive: false
+                        name: Vainsa Pe
+                      - id: 10001
+                        isActive: true
+                        name: Marca 10001
+                      - id: 10002
+                        isActive: false
+                        name: Marca 10002
+                      - id: 14521
+                        isActive: true
+                        name: Marca 14521-ERP
+                      - id: 14522
+                        isActive: true
+                        name: Marca 14522
+                      - id: 40001
+                        isActive: true
+                        name: HONDA
+                      - id: 40002
+                        isActive: true
+                        name: HUSQVARNA
+                      - id: 40003
+                        isActive: true
+                        name: LIMA CAUCHO
+                      - id: 40023
+                        isActive: true
+                        name: Electrolux
+                      - id: 40024
+                        isActive: true
+                        name: LG
+                      - id: 40386
+                        isActive: true
+                        name: HONDA PRUEBA
+                      - id: 40391
+                        isActive: true
+                        name: JULIO
+                      - id: 40392
+                        isActive: true
+                        name: ricardo
+                      - id: 40398
+                        isActive: true
+                        name: NUEVA MARCA 2024
+                      - id: 40399
+                        isActive: true
+                        name: k
+                      - id: 40400
+                        isActive: true
+                        name: ki
+                      - id: 40401
+                        isActive: true
+                        name: kis
+                      - id: 40402
+                        isActive: false
+                        name: KISS
+                      - id: 40403
+                        isActive: true
+                        name: CANT
+                      - id: 41025
+                        isActive: true
+                        name: Test Tikray 4
+                      - id: 41029
+                        isActive: true
+                        name: Refined Concrete Sausages
+                      - id: 45487
+                        isActive: true
+                        name: Marca 12433
+                      - id: 2000000
+                        isActive: true
+                        name: PDQ-marca-01
+                      - id: 2000013
+                        isActive: true
+                        name: Orma Carbono2
+                      - id: 4509883
+                        isActive: true
+                        name: PDQ-marca-03
+                      - id: 4509922
+                        isActive: true
+                        name: PDQ-marca-04
+                      - id: 4509923
+                        isActive: true
+                        name: PDQ-marca-05
+                      - id: 4509924
+                        isActive: true
+                        name: LG
+                      - id: 10100395
+                        isActive: false
+                        name: GCV RICARDO
+                      - id: 10100396
+                        isActive: true
+                        name: PRUEBA 01
+                      - id: 10100397
+                        isActive: true
+                        name: NUEVA MARCA
+                      - id: 10100398
+                        isActive: true
+                        name: LG
+                      - id: 10100399
+                        isActive: true
+                        name: Otro
+                    items:
+                      properties:
+                        id:
+                          example: 1
+                          type: number
+                        isActive:
+                          example: true
+                          type: boolean
+                        name:
+                          example: HONDA
+                          type: string
+                      type: object
+                    type: array
+                  message:
+                    example: Successfully listed brand
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 828300b5-4d8c-49c5-80fd-06cd6f4e79d4
+                type: string
+            type: object
       tags:
-      - "user"
-      summary: "Logs out current logged in user session"
-      description: ""
-      operationId: "logoutUser"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters: []
-      responses:
-        default:
-          description: "successful operation"
-  /user:
+        - Brand
+      description: Retrieves a list of all available brands in the VTEX system. This endpoint allows clients to view the complete collection of brands, including their details and attributes.
+      operationId: getbrands
+      summary: getBrands
     post:
-      tags:
-      - "user"
-      summary: "Create user"
-      description: "This can only be done by the logged in user."
-      operationId: "createUser"
       consumes:
-      - "application/json"
+        - application/json
       produces:
-      - "application/json"
-      - "application/xml"
+        - application/json
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Created user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              id:
+                example: 609
+                type: number
+              name:
+                example: Marca 1
+                type: string
+              similarWords:
+                example: Test 1, Test 2, Test 3
+                type: string
+            type: object
       responses:
-        default:
-          description: "successful operation"
-securityDefinitions:
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "https://petstore.swagger.io/oauth/authorize"
-    flow: "implicit"
-    scopes:
-      read:pets: "read your pets"
-      write:pets: "modify pets in your account"
-definitions:
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
-  Category:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Category"
-  Pet:
-    type: "object"
-    required:
-    - "name"
-    - "photoUrls"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      category:
-        $ref: "#/definitions/Category"
-      name:
-        type: "string"
-        example: "doggie"
-      photoUrls:
-        type: "array"
-        xml:
-          wrapped: true
-        items:
-          type: "string"
-          xml:
-            name: "photoUrl"
+        '200':
+          description: createBrands - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  brand:
+                    properties:
+                      id:
+                        example: 937
+                        type: number
+                      isActive:
+                        example: true
+                        type: boolean
+                      name:
+                        example: Roob - Mraz
+                        type: string
+                    type: object
+                  message:
+                    example: Successfully created brand
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: fdbd6244-79c1-46f2-a1df-262303fe3574
+                type: string
+            type: object
+        '400':
+          description: createBrands - 400 no data
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - id: id should not be empty, id must be an integer number
+                      - name: name should not be empty, name must be a string
+                    items:
+                      properties:
+                        id:
+                          example: id should not be empty, id must be an integer number
+                          type: string
+                        name:
+                          example: name should not be empty, name must be a string
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: f5403ce6-af52-4745-b48a-9322590b63c6
+                type: string
+            type: object
       tags:
-        type: "array"
-        xml:
-          wrapped: true
-        items:
-          xml:
-            name: "tag"
-          $ref: "#/definitions/Tag"
-      status:
-        type: "string"
-        description: "pet status in the store"
-        enum:
-        - "available"
-        - "pending"
-        - "sold"
-    xml:
-      name: "Pet"
-  Tag:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Tag"
-  Order:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      petId:
-        type: "integer"
-        format: "int64"
-      quantity:
-        type: "integer"
-        format: "int32"
-      shipDate:
-        type: "string"
-        format: "date-time"
-      status:
-        type: "string"
-        description: "Order Status"
-        enum:
-        - "placed"
-        - "approved"
-        - "delivered"
-      complete:
-        type: "boolean"
-    xml:
-      name: "Order"
-  User:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      username:
-        type: "string"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      email:
-        type: "string"
-      password:
-        type: "string"
-      phone:
-        type: "string"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
-    xml:
-      name: "User"
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+        - Brand
+      description: Creates a new brand in the VTEX system. This endpoint allows clients to add a new brand by providing the necessary information and attributes for the brand.
+      operationId: createbrands
+      summary: createBrands
+  /brands/{brandId}:
+    parameters:
+      - in: path
+        name: brandId
+        required: true
+        type: string
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              name:
+                example: ''
+                type: string
+              similarWords:
+                example: test, test3, test44
+                type: string
+            type: object
+      responses:
+        '200':
+          description: updateBrands - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  brand:
+                    properties:
+                      id:
+                        example: 937
+                        type: number
+                      isActive:
+                        example: true
+                        type: boolean
+                      name:
+                        example: Licensed Rubber Keyboard
+                        type: string
+                    type: object
+                  message:
+                    example: Successfully updated brand
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 51357630-9827-4a6b-9728-fbaa0d913500
+                type: string
+            type: object
+        '400':
+          description: updateBrands - 404
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example: The brand 33443 does not exist!
+                    type: string
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: c57cc8a8-7fd3-4d75-ad7c-bfcb39e8650a
+                type: string
+            type: object
+      tags:
+        - Brand
+      description: Updates the information of an existing brand in the VTEX system. This endpoint allows clients to modify the details and attributes of a specific brand identified by its ID.
+      operationId: updatebrands
+      summary: updateBrands
+  /category:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              fatherCategoryId:
+                example: 106
+                type: number
+              hasSpecification:
+                example: true
+                type: boolean
+              id:
+                example: 105
+                type: number
+              isActive:
+                example: true
+                type: boolean
+              name:
+                example: Categoria 1
+                type: string
+            type: object
+      responses:
+        '200':
+          description: createCategories - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  ActiveStoreFrontLink:
+                    example: true
+                    type: boolean
+                  AdWordsRemarketingCode:
+                    example: null
+                    x-nullable: true
+                  Description:
+                    example: Zulauf, Jacobi and Towne
+                    type: string
+                  FatherCategoryId:
+                    example: 21
+                    type: number
+                  GlobalCategoryId:
+                    example: 0
+                    type: number
+                  HasChildren:
+                    example: false
+                    type: boolean
+                  Id:
+                    example: 259
+                    type: number
+                  IsActive:
+                    example: true
+                    type: boolean
+                  Keywords:
+                    example: ''
+                    type: string
+                  LinkId:
+                    example: null
+                    x-nullable: true
+                  LomadeeCampaignCode:
+                    example: null
+                    x-nullable: true
+                  Name:
+                    example: Zulauf, Jacobi and Towne
+                    type: string
+                  Score:
+                    example: null
+                    x-nullable: true
+                  ShowBrandFilter:
+                    example: false
+                    type: boolean
+                  ShowInStoreFront:
+                    example: true
+                    type: boolean
+                  StockKeepingUnitSelectionMode:
+                    example: SPECIFICATION
+                    type: string
+                  Title:
+                    example: ''
+                    type: string
+                  TreePath:
+                    example: null
+                    x-nullable: true
+                  TreePathIds:
+                    example: null
+                    x-nullable: true
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: fcb398a3-913b-4405-a7e8-8463db1309cf
+                type: string
+            type: object
+        '400':
+          description: createCategories - 400
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - id: The id must have a maximum of 9 digits, id should not be empty, id must be an integer number
+                      - name: Name must be at most 100 characters long, name should not be empty, name must be a string
+                    items:
+                      properties:
+                        id:
+                          example: The id must have a maximum of 9 digits, id should not be empty, id must be an integer number
+                          type: string
+                        name:
+                          example: Name must be at most 100 characters long, name should not be empty, name must be a string
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 0fe221be-7479-47f8-9dc7-5390f3fd82d7
+                type: string
+            type: object
+      tags:
+        - Categories
+      description: Creates a new category in the VTEX system. This endpoint allows clients to add a new product category by providing the necessary information and attributes for the category.
+      operationId: createcategories
+      summary: createCategories
+  /category/{categoryId}:
+    parameters:
+      - in: path
+        name: categoryId
+        required: true
+        type: string
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              fatherCategoryId:
+                example: 21
+                type: number
+              hasSpecification:
+                example: true
+                type: boolean
+              isActive:
+                example: true
+                type: boolean
+              name:
+                example: categoria Nuev 222
+                type: string
+            type: object
+      responses:
+        '200':
+          description: updateCategories - 200
+          headers:
+            Access-Control-Allow-Credentials:
+              type: string
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            ETag:
+              type: string
+            Keep-Alive:
+              type: string
+            Vary:
+              type: string
+            X-Powered-By:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  ActiveStoreFrontLink:
+                    example: true
+                    type: boolean
+                  AdWordsRemarketingCode:
+                    example: null
+                    x-nullable: true
+                  Description:
+                    example: Marks - Nolan
+                    type: string
+                  FatherCategoryId:
+                    example: 785
+                    type: number
+                  GlobalCategoryId:
+                    example: null
+                    x-nullable: true
+                  HasChildren:
+                    example: null
+                    x-nullable: true
+                  Id:
+                    example: 666
+                    type: number
+                  IsActive:
+                    example: true
+                    type: boolean
+                  Keywords:
+                    example: ''
+                    type: string
+                  LinkId:
+                    example: null
+                    x-nullable: true
+                  LomadeeCampaignCode:
+                    example: null
+                    x-nullable: true
+                  Name:
+                    example: categoria Nuev 222
+                    type: string
+                  Score:
+                    example: null
+                    x-nullable: true
+                  ShowBrandFilter:
+                    example: false
+                    type: boolean
+                  ShowInStoreFront:
+                    example: true
+                    type: boolean
+                  StockKeepingUnitSelectionMode:
+                    example: SPECIFICATION
+                    type: string
+                  Title:
+                    example: ''
+                    type: string
+                  TreePath:
+                    example: null
+                    x-nullable: true
+                  TreePathIds:
+                    example: null
+                    x-nullable: true
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 7edd3b03-099f-47dd-82dd-162aba97a3ce
+                type: string
+            type: object
+        '400':
+          description: updateCategories - 400 no data
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - name: Name must be at most 100 characters long, name should not be empty, name must be a string
+                    items:
+                      properties:
+                        name:
+                          example: Name must be at most 100 characters long, name should not be empty, name must be a string
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: c1e9d2b5-727a-4c56-b83a-dfe042e116de
+                type: string
+            type: object
+        '500':
+          description: updateCategories - 500
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example: Request failed with status code 500
+                    type: string
+                  statusCode:
+                    example: 500
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 8c7eada4-fbde-421f-b3e2-93a1ff1ac086
+                type: string
+            type: object
+      tags:
+        - Categories
+      description: Updates the information of an existing category in the VTEX system. This endpoint allows clients to modify the details and attributes of a specific category identified by its ID.
+      operationId: updatecategories
+      summary: updateCategories
+  /category/{categoryId}/specification:
+    parameters:
+      - in: path
+        name: categoryId
+        required: true
+        type: string
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              isActive:
+                example: true
+                type: boolean
+              isFilter:
+                example: true
+                type: boolean
+              isVisible:
+                example: true
+                type: boolean
+              name:
+                example: Especificación 1
+                type: string
+              newName:
+                example: Especificación 2
+                type: string
+              value:
+                example: Rojo
+                type: string
+            type: object
+      responses:
+        '200':
+          description: specificationUpdate - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  CategoryId:
+                    example: 7015
+                    type: number
+                  DefaultValue:
+                    example: Gama 34
+                    type: string
+                  Description:
+                    example: RAYOXs
+                    type: string
+                  FieldGroupId:
+                    example: 452
+                    type: number
+                  FieldTypeId:
+                    example: 2
+                    type: number
+                  Id:
+                    example: 2886
+                    type: number
+                  IsActive:
+                    example: true
+                    type: boolean
+                  IsFilter:
+                    example: true
+                    type: boolean
+                  IsOnProductDetails:
+                    example: true
+                    type: boolean
+                  IsRequired:
+                    example: false
+                    type: boolean
+                  IsSideMenuLinkActive:
+                    example: true
+                    type: boolean
+                  IsStockKeepingUnit:
+                    example: false
+                    type: boolean
+                  IsTopMenuLinkActive:
+                    example: false
+                    type: boolean
+                  IsWizard:
+                    example: false
+                    type: boolean
+                  Name:
+                    example: RAYOXs
+                    type: string
+                  Position:
+                    example: 1
+                    type: number
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 479a1958-7244-4d8a-b90d-23cf30775173
+                type: string
+            type: object
+        '400':
+          description: specificationUpdate - 400 no data
+          headers:
+            Access-Control-Allow-Credentials:
+              type: string
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            ETag:
+              type: string
+            Keep-Alive:
+              type: string
+            Vary:
+              type: string
+            X-Powered-By:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - name: name must be shorter than or equal to 100 characters, name should not be empty, name must be a string
+                      - newName: newName must be shorter than or equal to 100 characters, newName must be a string
+                    items:
+                      properties:
+                        name:
+                          example: name must be shorter than or equal to 100 characters, name should not be empty, name must be a string
+                          type: string
+                        newName:
+                          example: newName must be shorter than or equal to 100 characters, newName must be a string
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 2c2d7cbc-2dd7-4daa-bb6b-7503525b6503
+                type: string
+            type: object
+      tags:
+        - Categories
+      description: Updates an existing specification for a category in the VTEX system. This endpoint allows clients to modify the details of a category's specification, ensuring that the categorization and product filtering remain accurate and up-to-date.
+      operationId: specificationupdate
+      summary: specificationUpdate
+  /category/{categoryId}/specification/:
+    parameters:
+      - in: path
+        name: categoryId
+        required: true
+        type: string
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              defaultValue:
+                example: Rojo
+                type: string
+              name:
+                example: Color
+                type: string
+            type: object
+      responses:
+        '200':
+          description: specificationCreate - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  CategoryId:
+                    example: 7015
+                    type: number
+                  DefaultValue:
+                    example: Gama 34
+                    type: string
+                  Description:
+                    example: RAYOXus2
+                    type: string
+                  FieldGroupId:
+                    example: 452
+                    type: number
+                  FieldTypeId:
+                    example: 2
+                    type: number
+                  Id:
+                    example: 2897
+                    type: number
+                  IsActive:
+                    example: true
+                    type: boolean
+                  IsFilter:
+                    example: true
+                    type: boolean
+                  IsOnProductDetails:
+                    example: true
+                    type: boolean
+                  IsRequired:
+                    example: false
+                    type: boolean
+                  IsSideMenuLinkActive:
+                    example: true
+                    type: boolean
+                  IsStockKeepingUnit:
+                    example: false
+                    type: boolean
+                  IsTopMenuLinkActive:
+                    example: false
+                    type: boolean
+                  IsWizard:
+                    example: false
+                    type: boolean
+                  Name:
+                    example: RAYOXus2
+                    type: string
+                  Position:
+                    example: 1
+                    type: number
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 1d8d7667-25e1-49e1-ad78-5c73da4e0d0f
+                type: string
+            type: object
+        '400':
+          description: specificationCreate - 400 no data
+          headers:
+            Access-Control-Allow-Credentials:
+              type: string
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            ETag:
+              type: string
+            Keep-Alive:
+              type: string
+            Vary:
+              type: string
+            X-Powered-By:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - name: name must be shorter than or equal to 100 characters, name should not be empty, name must be a string
+                      - newName: newName must be shorter than or equal to 100 characters, newName must be a string
+                    items:
+                      properties:
+                        name:
+                          example: name must be shorter than or equal to 100 characters, name should not be empty, name must be a string
+                          type: string
+                        newName:
+                          example: newName must be shorter than or equal to 100 characters, newName must be a string
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 9c8c5270-9232-4adf-b3a4-5d33bd6b4dbf
+                type: string
+            type: object
+      tags:
+        - Categories
+      description: Creates a new specification for a category in the VTEX system. This endpoint allows clients to add detailed specifications to a category, enhancing the categorization and filtering of products.
+      operationId: specificationcreate
+      summary: specificationCreate
+  /dni/{dni}:
+    parameters:
+      - in: path
+        name: dni
+        required: true
+        type: string
+    post:
+      consumes:
+        - text/plain
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: tikray-zipcode
+          type: string
+        - in: body
+          name: body
+          schema:
+            format: binary
+            type: string
+      responses:
+        '200':
+          description: getDNI - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  business_name:
+                    example: SOTO-CHIRINOS SOCIEDAD COMERCIAL DE RESPONSABILIDAD LIMITADA
+                    type: string
+                  ruc:
+                    example: '20601420067'
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 49ac2c85-8319-4969-ab36-1f34a1124d9f
+                type: string
+            type: object
+      tags:
+        - Request for Identity Documents
+      description: Get DNI information.
+      operationId: getdni
+      summary: getDNI
+  /orders/hook:
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: header
+          name: Username
+          type: string
+        - in: header
+          name: Password
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              CurrentChange:
+                example: '2024-06-19T20:57:20.838933Z'
+                type: string
+              Domain:
+                example: Marketplace
+                type: string
+              LastChange:
+                example: '2024-06-19T20:57:20.8107666Z'
+                type: string
+              LastState:
+                example: approve-payment
+                type: string
+              OrderId:
+                example: 1440540507649-01
+                type: string
+              Origin:
+                properties:
+                  Account:
+                    example: prodequa
+                    type: string
+                  Key:
+                    example: vtexappkey-prodequa-ASJUUK
+                    type: string
+                type: object
+              State:
+                example: payment-approved
+                type: string
+            type: object
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Orders
+      description: Synchronizes orders from VTEX to an ERP system using a custom schema. This endpoint allows clients to retrieve and transform order data from VTEX based on a specified custom schema, facilitating seamless integration and data synchronization with their ERP systems.
+      operationId: hook
+      summary: Hook
+  /orders/schema/{orderId}:
+    parameters:
+      - in: path
+        name: orderId
+        required: true
+        type: string
+    get:
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+      responses:
+        '200':
+          description: getOrderBySchema - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  objEcommerceBE:
+                    properties:
+                      Cliente:
+                        properties:
+                          Apellidos:
+                            example: '-'
+                            type: string
+                          Celular:
+                            example: '+51972787381'
+                            type: string
+                          CodigoPostal:
+                            example: '001'
+                            type: string
+                          CodigoPostal_DESTINATARIO:
+                            example: '001'
+                            type: string
+                          Departamento:
+                            example: '015'
+                            type: string
+                          Departamento_DESTINATARIO:
+                            example: '015'
+                            type: string
+                          Direccion:
+                            example: calle piura 222
+                            type: string
+                          DireccionReferencia:
+                            example: '222'
+                            type: string
+                          DireccionReferencia_DESTINATARIO:
+                            example: '-'
+                            type: string
+                          Direccion_DESTINATARIO:
+                            example: poklñlkñ klllklklksdf
+                            type: string
+                          Documento:
+                            example: '20601011299'
+                            type: string
+                          Documento_DESTINATARIO:
+                            example: '-'
+                            type: string
+                          Email:
+                            example: jpsotochirinos@gmail.com
+                            type: string
+                          Nombres:
+                            example: '-'
+                            type: string
+                          Nombres_DESTINATARIO:
+                            example: Juan Pedro Prez Manzano
+                            type: string
+                          Provincia:
+                            example: '001'
+                            type: string
+                          Provincia_DESTINATARIO:
+                            example: '001'
+                            type: string
+                          RazonSocial:
+                            example: SOCH
+                            type: string
+                          TipoDocumento:
+                            example: R
+                            type: string
+                        type: object
+                      Comentario:
+                        example: '-'
+                        type: string
+                      CompaniaSocio:
+                        example: '01000000'
+                        type: string
+                      EstablecimientoCodigo:
+                        example: '-'
+                        type: string
+                      FechaDocumento:
+                        example: '2024-07-11T17:20:00.355Z'
+                        type: string
+                      FormadePago:
+                        example: '001'
+                        type: string
+                      Items:
+                        example:
+                          - CantidadPedida: 1
+                            Descripcion: Producto xd
+                            Indice: 1
+                            Item: '45678912'
+                            MontoFinal: '100.00'
+                            PrecioUnitario: '300.00'
+                            PrecioUnitarioFinal: '100.00'
+                            TiempoGexAno: 0
+                            TipoDetalle: I
+                            TransferenciaGratuita: 'N'
+                          - CantidadPedida: 1
+                            Descripcion: Aire acondicionado Electrolux Split 12000 Btu  EASX12A2RSDQW AIRE ACONDICIONADO 12,000 BTU ELECTROLUX [EASX12A2RSDQW]
+                            Indice: 2
+                            Item: '22998'
+                            MontoFinal: '100.00'
+                            PrecioUnitario: '150.00'
+                            PrecioUnitarioFinal: '100.00'
+                            TiempoGexAno: 0
+                            TipoDetalle: I
+                            TransferenciaGratuita: 'N'
+                          - CantidadPedida: 1
+                            Descripcion: Horno Microondas Oster 20L POGME2701 810073471566
+                            Indice: 3
+                            Item: '810073471566'
+                            MontoFinal: '200.00'
+                            PrecioUnitario: '400.00'
+                            PrecioUnitarioFinal: '200.00'
+                            TiempoGexAno: 0
+                            TipoDetalle: I
+                            TransferenciaGratuita: 'N'
+                        items:
+                          properties:
+                            CantidadPedida:
+                              example: 1
+                              type: number
+                            Descripcion:
+                              example: Producto xd
+                              type: string
+                            Indice:
+                              example: 1
+                              type: number
+                            Item:
+                              example: '45678912'
+                              type: string
+                            MontoFinal:
+                              example: '100.00'
+                              type: string
+                            PrecioUnitario:
+                              example: '300.00'
+                              type: string
+                            PrecioUnitarioFinal:
+                              example: '100.00'
+                              type: string
+                            TiempoGexAno:
+                              example: 0
+                              type: number
+                            TipoDetalle:
+                              example: I
+                              type: string
+                            TransferenciaGratuita:
+                              example: 'N'
+                              type: string
+                          type: object
+                        type: array
+                      ListaPrecio:
+                        example: E
+                        type: string
+                      NumeroOrden:
+                        example: 1446300507423-01
+                        type: string
+                      UnidadNegocio:
+                        example: '-'
+                        type: string
+                    type: object
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 3e7de7f3-650f-417c-8522-92e9c6174968
+                type: string
+            type: object
+      tags:
+        - Orders
+      description: Synchronizes orders from VTEX to an ERP system using a custom schema. This endpoint allows clients to retrieve and transform order data from VTEX based on a specified custom schema, facilitating seamless integration and data synchronization with their ERP systems.
+      operationId: getorderbyschema
+      summary: getOrderBySchema
+  /orders/{orderId}/invoice:
+    parameters:
+      - in: path
+        name: orderId
+        required: true
+        type: string
+    patch:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              invoice:
+                example: E001-223
+                type: string
+              status:
+                example: facturado
+                type: string
+            type: object
+      responses:
+        '200':
+          description: cancelado
+          headers:
+            Access-Control-Allow-Credentials:
+              type: string
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            ETag:
+              type: string
+            Keep-Alive:
+              type: string
+            Vary:
+              type: string
+            X-Powered-By:
+              type: string
+          schema:
+            properties:
+              data:
+                example:
+                  - data:
+                      reason: Ya no cuenta con stock
+                    method: post
+                    status: cancel
+                    url: v1/orders/1446300507423-01/cancel
+                items:
+                  properties:
+                    data:
+                      properties:
+                        reason:
+                          example: Ya no cuenta con stock
+                          type: string
+                      type: object
+                    method:
+                      example: post
+                      type: string
+                    status:
+                      example: cancel
+                      type: string
+                    url:
+                      example: v1/orders/1446300507423-01/cancel
+                      type: string
+                  type: object
+                type: array
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 76a56f4f-399f-4949-99de-92752c0caccf
+                type: string
+            type: object
+      tags:
+        - Orders
+      description: Synchronizes invoice information for an order in the VTEX system. This endpoint allows clients to update the VTEX system with invoicing details, including invoice numbers, amounts, and dates, ensuring accurate financial records and order processing.
+      operationId: invoice
+      summary: Invoice
+  /orders/{orderId}/tracking:
+    parameters:
+      - in: path
+        name: orderId
+        required: true
+        type: string
+    patch:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              invoice:
+                example: E001-223
+                type: string
+              status:
+                example: enviado
+                type: string
+              tracking:
+                properties:
+                  courrier:
+                    example: Olva
+                    type: string
+                  dateDelivered:
+                    example: '2022 - 10-01 21: 15'
+                    type: string
+                  events:
+                    example: []
+                    items: {}
+                    type: array
+                  isDelivered:
+                    example: false
+                    type: boolean
+                  trackingNumber:
+                    example: UE021AE94
+                    type: string
+                  url:
+                    example: https://www.tracking.com/url
+                    type: string
+                type: object
+            type: object
+      responses:
+        '200':
+          description: entregado
+          headers:
+            Access-Control-Allow-Credentials:
+              type: string
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            ETag:
+              type: string
+            Keep-Alive:
+              type: string
+            Vary:
+              type: string
+            X-Powered-By:
+              type: string
+          schema:
+            properties:
+              data:
+                example:
+                  - data:
+                      deliveredDate: '2024-08-07T03:04:30.068Z'
+                      events:
+                        - city: Puno
+                          date: '2024 - 07-12 00: 15'
+                          detalle: Saliendo de Lurin
+                      isDelivered: true
+                    method: put
+                    status: updateTrackingInfo
+                    url: v1/orders/1446530507429-01/invoice/E001-223/tracking
+                items:
+                  properties:
+                    data:
+                      properties:
+                        deliveredDate:
+                          example: '2024-08-07T03:04:30.068Z'
+                          type: string
+                        events:
+                          example:
+                            - city: Puno
+                              date: '2024 - 07-12 00: 15'
+                              detalle: Saliendo de Lurin
+                          items:
+                            properties:
+                              city:
+                                example: Puno
+                                type: string
+                              date:
+                                example: '2024 - 07-12 00: 15'
+                                type: string
+                              detalle:
+                                example: Saliendo de Lurin
+                                type: string
+                            type: object
+                          type: array
+                        isDelivered:
+                          example: true
+                          type: boolean
+                      type: object
+                    method:
+                      example: put
+                      type: string
+                    status:
+                      example: updateTrackingInfo
+                      type: string
+                    url:
+                      example: v1/orders/1446530507429-01/invoice/E001-223/tracking
+                      type: string
+                  type: object
+                type: array
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: ef8dbead-d45f-43fe-ad82-aff62c55d18b
+                type: string
+            type: object
+      tags:
+        - Orders
+      description: Synchronizes tracking information for an order in the VTEX system. This endpoint allows clients to update the VTEX system with shipment tracking details, including carrier information, tracking numbers, and status updates, ensuring customers are informed about the status of their deliveries.
+      operationId: tracking
+      summary: Tracking
+  /price:
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              basePrice:
+                example: 900
+                type: number
+              listPrice:
+                example: 1100
+                type: number
+              skuId:
+                example: '76011796'
+                type: string
+            type: object
+      responses:
+        '200':
+          description: updatePrice - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  message:
+                    example: Successfully updated price
+                    type: string
+                  priceData:
+                    properties:
+                      basePrice:
+                        example: 900
+                        type: number
+                      listPrice:
+                        example: 1100
+                        type: number
+                      skuId:
+                        example: '76011796'
+                        type: string
+                    type: object
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 8b964cf5-88a4-4c01-bb71-4ccc25f333fc
+                type: string
+            type: object
+        '400':
+          description: updatePrice - 400
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - skuId: skuId should not be empty, skuId must be a string
+                      - basePrice: basePrice must not be less than 0, basePrice should not be empty, basePrice must be a number conforming to the specified constraints
+                    items:
+                      properties:
+                        basePrice:
+                          example: basePrice must not be less than 0, basePrice should not be empty, basePrice must be a number conforming to the specified constraints
+                          type: string
+                        skuId:
+                          example: skuId should not be empty, skuId must be a string
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: cba370a8-bd97-4a36-88cd-709069ad0e79
+                type: string
+            type: object
+      tags:
+        - Price
+      description: Updates the price of a specific product in the VTEX system. This endpoint allows clients to modify the price details of a single sku identified by its RefID.
+      operationId: updateprice
+      summary: updatePrice
+  /price/bulk/:
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            example:
+              - basePrice: -500
+                listPrice: 750
+                priceTable: pruebaTikrayDemo
+                skuId: '125478'
+              - basePrice: 100
+                listPrice: -150
+                skuId: 151D4LT
+              - basePrice: -100
+                listPrice: 0
+                skuId: '019495'
+            items:
+              properties:
+                basePrice:
+                  example: -500
+                  type: number
+                listPrice:
+                  example: 750
+                  type: number
+                priceTable:
+                  example: pruebaTikrayDemo
+                  type: string
+                skuId:
+                  example: '125478'
+                  type: string
+              type: object
+            type: array
+      responses:
+        '200':
+          description: updateBulkPrice - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  message:
+                    example: The bulk update request has been received. You will receive the results by email.
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 9503e959-1a89-4cd3-8351-256bfb541d46
+                type: string
+            type: object
+      tags:
+        - Price
+      description: Updates the prices of multiple products in the VTEX system in bulk. This endpoint allows clients to modify the price details for a batch of sku, enabling efficient and large-scale price adjustments.
+      operationId: updatebulkprice
+      summary: updateBulkPrice
+  /products/:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              brandId:
+                example: '610'
+                type: string
+              categoryId:
+                example: '7073'
+                type: string
+              dataSheet:
+                example:
+                  - fileName: Ficha tecnica 1
+                    url: www.fichatecnica.com
+                items:
+                  properties:
+                    fileName:
+                      example: Ficha tecnica 1
+                      type: string
+                    url:
+                      example: www.fichatecnica.com
+                      type: string
+                  type: object
+                type: array
+              description:
+                example: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                type: string
+              isActive:
+                example: true
+                type: boolean
+              isFeatured:
+                example: false
+                type: boolean
+              keywords:
+                example: producto, 1234, max
+                type: string
+              linkName:
+                example: producto-1234-max
+                type: string
+              name:
+                example: Producto 1234
+                type: string
+              productId:
+                example: PROD1234
+                type: string
+              showWithoutStock:
+                example: true
+                type: boolean
+              skus:
+                example:
+                  - EstimatedDateArrival: '2024-12-31'
+                    Height: 10
+                    Length: 20
+                    ManufacturerCode: ManuCode789
+                    PackagedHeight: 12
+                    PackagedLength: 22
+                    PackagedWeightKg: 2.5
+                    PackagedWidth: 6
+                    WeightKg: 1.2
+                    Width: 5
+                    ean: '1237567890433'
+                    images:
+                      - description: Vista frontal del producto
+                        fileName: image1.jpg
+                        url: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                      - description: Vista lateral del producto
+                        fileName: image2.jpg
+                        url: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                    name: Producto 1234 - 01
+                    skuId: PROD1234-01
+                    videoUrl:
+                      - http://example.com/video1.mp4
+                      - http://example.com/video2.mp4
+                items:
+                  properties:
+                    EstimatedDateArrival:
+                      example: '2024-12-31'
+                      type: string
+                    Height:
+                      example: 10
+                      type: number
+                    Length:
+                      example: 20
+                      type: number
+                    ManufacturerCode:
+                      example: ManuCode789
+                      type: string
+                    PackagedHeight:
+                      example: 12
+                      type: number
+                    PackagedLength:
+                      example: 22
+                      type: number
+                    PackagedWeightKg:
+                      example: 2.5
+                      type: number
+                    PackagedWidth:
+                      example: 6
+                      type: number
+                    WeightKg:
+                      example: 1.2
+                      type: number
+                    Width:
+                      example: 5
+                      type: number
+                    ean:
+                      example: '1237567890433'
+                      type: string
+                    images:
+                      example:
+                        - description: Vista frontal del producto
+                          fileName: image1.jpg
+                          url: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                        - description: Vista lateral del producto
+                          fileName: image2.jpg
+                          url: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                      items:
+                        properties:
+                          description:
+                            example: Vista frontal del producto
+                            type: string
+                          fileName:
+                            example: image1.jpg
+                            type: string
+                          url:
+                            example: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                            type: string
+                        type: object
+                      type: array
+                    name:
+                      example: Producto 1234 - 01
+                      type: string
+                    skuId:
+                      example: PROD1234-01
+                      type: string
+                    videoUrl:
+                      example:
+                        - http://example.com/video1.mp4
+                        - http://example.com/video2.mp4
+                      items:
+                        example: http://example.com/video1.mp4
+                        type: string
+                      type: array
+                  type: object
+                type: array
+              specifications:
+                example:
+                  - name: COLOR
+                    value: Rojo
+                  - name: COLECCIÓN
+                    value: Otoño
+                  - name: CARACTERISTICAS
+                    value: Max
+                  - name: INCLUYE
+                    value: Paz
+                items:
+                  properties:
+                    name:
+                      example: COLOR
+                      type: string
+                    value:
+                      example: Rojo
+                      type: string
+                  type: object
+                type: array
+            type: object
+      responses:
+        '200':
+          description: createProducts - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  AdWordsRemarketingCode:
+                    example: null
+                    x-nullable: true
+                  BrandId:
+                    example: 610
+                    type: number
+                  CategoryId:
+                    example: 7073
+                    type: number
+                  DepartmentId:
+                    example: 9004
+                    type: number
+                  Description:
+                    example: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                    type: string
+                  DescriptionShort:
+                    example: null
+                    x-nullable: true
+                  Id:
+                    example: 18631
+                    type: number
+                  IsActive:
+                    example: true
+                    type: boolean
+                  IsVisible:
+                    example: false
+                    type: boolean
+                  KeyWords:
+                    example: tech, gadget, innovative
+                    type: string
+                  LinkId:
+                    example: super-gadget-lamo-2
+                    type: string
+                  LomadeeCampaignCode:
+                    example: null
+                    x-nullable: true
+                  MetaTagDescription:
+                    example: ''
+                    type: string
+                  Name:
+                    example: See22testlamao
+                    type: string
+                  RefId:
+                    example: wertestLamo202454
+                    type: string
+                  ReleaseDate:
+                    example: '2024-08-02T21:34:43'
+                    type: string
+                  Score:
+                    example: 1
+                    type: number
+                  ShowWithoutStock:
+                    example: true
+                    type: boolean
+                  SupplierId:
+                    example: 1
+                    type: number
+                  TaxCode:
+                    example: ''
+                    type: string
+                  Title:
+                    example: See22testlamao
+                    type: string
+                  missingSpecifications:
+                    example: []
+                    items: {}
+                    type: array
+                  skuCreated:
+                    example: []
+                    items: {}
+                    type: array
+                  skuFailed:
+                    example:
+                      - data:
+                          EstimatedDateArrival: '2024-12-31'
+                          Height: 10
+                          Length: 20
+                          ManufacturerCode: ManuCode789
+                          PackagedHeight: 12
+                          PackagedLength: 22
+                          PackagedWeightGr: 2.5
+                          PackagedWidth: 6
+                          WeightGr: 1.2
+                          Width: 5
+                          ean: '1237567890433'
+                          images:
+                            - description: Vista frontal del producto
+                              fileName: image1.jpg
+                              url: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                            - description: Vista lateral del producto
+                              fileName: image2.jpg
+                              url: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                          name: Super dees sk2u
+                          skuId: sdddg01
+                          videoUrl:
+                            - http://example.com/video1.mp4
+                            - http://example.com/video2.mp4
+                        error: SKU already exists in VTEX
+                    items:
+                      properties:
+                        data:
+                          properties:
+                            EstimatedDateArrival:
+                              example: '2024-12-31'
+                              type: string
+                            Height:
+                              example: 10
+                              type: number
+                            Length:
+                              example: 20
+                              type: number
+                            ManufacturerCode:
+                              example: ManuCode789
+                              type: string
+                            PackagedHeight:
+                              example: 12
+                              type: number
+                            PackagedLength:
+                              example: 22
+                              type: number
+                            PackagedWeightGr:
+                              example: 2.5
+                              type: number
+                            PackagedWidth:
+                              example: 6
+                              type: number
+                            WeightGr:
+                              example: 1.2
+                              type: number
+                            Width:
+                              example: 5
+                              type: number
+                            ean:
+                              example: '1237567890433'
+                              type: string
+                            images:
+                              example:
+                                - description: Vista frontal del producto
+                                  fileName: image1.jpg
+                                  url: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                                - description: Vista lateral del producto
+                                  fileName: image2.jpg
+                                  url: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                              items:
+                                properties:
+                                  description:
+                                    example: Vista frontal del producto
+                                    type: string
+                                  fileName:
+                                    example: image1.jpg
+                                    type: string
+                                  url:
+                                    example: https://fs.prodequa.com/uploads/2003237674608_1.jpg
+                                    type: string
+                                type: object
+                              type: array
+                            name:
+                              example: Super dees sk2u
+                              type: string
+                            skuId:
+                              example: sdddg01
+                              type: string
+                            videoUrl:
+                              example:
+                                - http://example.com/video1.mp4
+                                - http://example.com/video2.mp4
+                              items:
+                                example: http://example.com/video1.mp4
+                                type: string
+                              type: array
+                          type: object
+                        error:
+                          example: SKU already exists in VTEX
+                          type: string
+                      type: object
+                    type: array
+                  successSpecifications:
+                    example:
+                      - data:
+                          FieldId: 1445
+                          FieldValueId: null
+                          Id: 16677
+                          ProductId: 18631
+                          Text: <a href="www.fichatecnica.com" target="_blank" rel="noopener noreferrer">Ficha tecnica 1</a>
+                        message: Specification successfully created
+                      - data:
+                          FieldId: 2639
+                          FieldValueId: null
+                          Id: 16678
+                          ProductId: 18631
+                          Text: Rojo
+                        message: Specification successfully created
+                      - data:
+                          FieldId: 2642
+                          FieldValueId: null
+                          Id: 16679
+                          ProductId: 18631
+                          Text: Mas
+                        message: Specification successfully created
+                      - data:
+                          FieldId: 2644
+                          FieldValueId: null
+                          Id: 16680
+                          ProductId: 18631
+                          Text: Rosssjo
+                        message: Specification successfully created
+                      - data:
+                          FieldId: 2648
+                          FieldValueId: null
+                          Id: 16681
+                          ProductId: 18631
+                          Text: Paz
+                        message: Specification successfully created
+                    items:
+                      properties:
+                        data:
+                          properties:
+                            FieldId:
+                              example: 1445
+                              type: number
+                            FieldValueId:
+                              example: null
+                              x-nullable: true
+                            Id:
+                              example: 16677
+                              type: number
+                            ProductId:
+                              example: 18631
+                              type: number
+                            Text:
+                              example: <a href="www.fichatecnica.com" target="_blank" rel="noopener noreferrer">Ficha tecnica 1</a>
+                              type: string
+                          type: object
+                        message:
+                          example: Specification successfully created
+                          type: string
+                      type: object
+                    type: array
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 34ab418b-fa3d-475d-9670-7e5150678fa5
+                type: string
+            type: object
+        '400':
+          description: createProducts - 400 no data
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - productId: productId must be a string, productId should not be empty
+                      - name: name must be a string, name should not be empty
+                      - categoryId: categoryId must be a string, categoryId should not be empty
+                      - brandId: brandId must be a string, brandId should not be empty
+                    items:
+                      properties:
+                        brandId:
+                          example: brandId must be a string, brandId should not be empty
+                          type: string
+                        categoryId:
+                          example: categoryId must be a string, categoryId should not be empty
+                          type: string
+                        name:
+                          example: name must be a string, name should not be empty
+                          type: string
+                        productId:
+                          example: productId must be a string, productId should not be empty
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 1ec08010-8118-4c1f-958d-0b3adc8b34cc
+                type: string
+            type: object
+        '401':
+          description: createProducts - 400 name
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example: There is already a product with the same name
+                    type: string
+                  statusCode:
+                    example: 401
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 2a7a9103-d854-4da3-8016-0e11f14563aa
+                type: string
+            type: object
+      tags:
+        - Product
+      description: Creates a new product in the VTEX system. This endpoint allows clients to add a new product by providing the necessary information and attributes for the product.
+      operationId: createproducts
+      summary: createProducts
+  /products/bulk/:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            example:
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON301
+                showWithoutStock: true
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON302
+                showWithoutStock: true
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON303
+                showWithoutStock: true
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON304
+                showWithoutStock: true
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON305
+                showWithoutStock: true
+            items:
+              properties:
+                brandId:
+                  example: '610'
+                  type: string
+                categoryId:
+                  example: '7073'
+                  type: string
+                description:
+                  example: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                  type: string
+                isActive:
+                  example: true
+                  type: boolean
+                isFeatured:
+                  example: false
+                  type: boolean
+                keywords:
+                  example: tech, gadget, innovative
+                  type: string
+                linkName:
+                  example: super-gadget
+                  type: string
+                name:
+                  example: Super Inovvator 300
+                  type: string
+                productId:
+                  example: SUINVON301
+                  type: string
+                showWithoutStock:
+                  example: true
+                  type: boolean
+              type: object
+            type: array
+      responses:
+        '200':
+          description: createBulkProduct - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  message:
+                    example: The bulk update request has been received. You will receive the results by email.
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 41ae6857-32e6-4b67-b4cf-fd7558f8ab8e
+                type: string
+            type: object
+      tags:
+        - Product
+      description: Creates multiple new products in the VTEX system in bulk. This endpoint allows clients to add several products simultaneously by providing the required information and attributes for each product in a batch.
+      operationId: createbulkproduct
+      summary: createBulkProduct
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            example:
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON301
+                showWithoutStock: true
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON302
+                showWithoutStock: true
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON303
+                showWithoutStock: true
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON304
+                showWithoutStock: true
+              - brandId: '610'
+                categoryId: '7073'
+                description: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                isActive: true
+                isFeatured: false
+                keywords: tech, gadget, innovative
+                linkName: super-gadget
+                name: Super Inovvator 300
+                productId: SUINVON305
+                showWithoutStock: true
+            items:
+              properties:
+                brandId:
+                  example: '610'
+                  type: string
+                categoryId:
+                  example: '7073'
+                  type: string
+                description:
+                  example: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                  type: string
+                isActive:
+                  example: true
+                  type: boolean
+                isFeatured:
+                  example: false
+                  type: boolean
+                keywords:
+                  example: tech, gadget, innovative
+                  type: string
+                linkName:
+                  example: super-gadget
+                  type: string
+                name:
+                  example: Super Inovvator 300
+                  type: string
+                productId:
+                  example: SUINVON301
+                  type: string
+                showWithoutStock:
+                  example: true
+                  type: boolean
+              type: object
+            type: array
+      responses:
+        '200':
+          description: createBulkProducts - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  message:
+                    example: The bulk update request has been received. You will receive the results by email.
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 446d578d-c74a-4042-a36a-b3dee91663b3
+                type: string
+            type: object
+      tags:
+        - Product
+      description: Updates the information of multiple products in the VTEX system in bulk. This endpoint allows clients to modify the details and attributes of several products simultaneously, identified by their IDs, facilitating efficient and large-scale product management.
+      operationId: updatebulkproducts
+      summary: updateBulkProducts
+  /products/{productId}:
+    parameters:
+      - in: path
+        name: productId
+        required: true
+        type: string
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              brandId:
+                example: '610'
+                type: string
+              categoryId:
+                example: '7073'
+                type: string
+              description:
+                example: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                type: string
+              isActive:
+                example: true
+                type: boolean
+              isFeatured:
+                example: false
+                type: boolean
+              keywords:
+                example: producto, 1234, max
+                type: string
+              linkName:
+                example: producto-1234-max
+                type: string
+              name:
+                example: Producto 1234
+                type: string
+              showWithoutStock:
+                example: true
+                type: boolean
+            type: object
+      responses:
+        '200':
+          description: updateProducts - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  AdWordsRemarketingCode:
+                    example: null
+                    x-nullable: true
+                  BrandId:
+                    example: 610
+                    type: number
+                  CategoryId:
+                    example: 7073
+                    type: number
+                  DepartmentId:
+                    example: 9004
+                    type: number
+                  Description:
+                    example: This is an innovative super gadget that features state-of-the-art technology to enhance your everyday life.
+                    type: string
+                  DescriptionShort:
+                    example: null
+                    x-nullable: true
+                  Id:
+                    example: 18055
+                    type: number
+                  IsActive:
+                    example: true
+                    type: boolean
+                  IsVisible:
+                    example: false
+                    type: boolean
+                  KeyWords:
+                    example: tech, gadget, innovative
+                    type: string
+                  LinkId:
+                    example: super-gadget-878-8
+                    type: string
+                  LomadeeCampaignCode:
+                    example: null
+                    x-nullable: true
+                  MetaTagDescription:
+                    example: ''
+                    type: string
+                  Name:
+                    example: See222
+                    type: string
+                  RefId:
+                    example: s1eeeggg
+                    type: string
+                  ReleaseDate:
+                    example: '2024-07-26T00:00:00'
+                    type: string
+                  Score:
+                    example: 1
+                    type: number
+                  ShowWithoutStock:
+                    example: true
+                    type: boolean
+                  SupplierId:
+                    example: 1
+                    type: number
+                  TaxCode:
+                    example: ''
+                    type: string
+                  Title:
+                    example: See222
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: bcc324f7-a8fd-485a-881c-ec79fae73a73
+                type: string
+            type: object
+        '400':
+          description: updateProducts - 400 no data
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - name: name must be a string, name should not be empty
+                      - categoryId: categoryId must be a string, categoryId should not be empty
+                      - brandId: brandId must be a string, brandId should not be empty
+                    items:
+                      properties:
+                        brandId:
+                          example: brandId must be a string, brandId should not be empty
+                          type: string
+                        categoryId:
+                          example: categoryId must be a string, categoryId should not be empty
+                          type: string
+                        name:
+                          example: name must be a string, name should not be empty
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: f63eb6b7-105c-4c7a-acca-e336b8fb948e
+                type: string
+            type: object
+      tags:
+        - Product
+      description: Updates the information of an existing product in the VTEX system. This endpoint allows clients to modify the details and attributes of a single product identified by its ID.
+      operationId: updateproducts
+      summary: updateProducts
+  /ruc/{ruc}:
+    parameters:
+      - in: path
+        name: ruc
+        required: true
+        type: string
+    post:
+      consumes:
+        - text/plain
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: tikray-zipcode
+          type: string
+        - in: body
+          name: body
+          schema:
+            format: binary
+            type: string
+      responses:
+        '200':
+          description: getRUC - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  document:
+                    example: '70627054'
+                    type: string
+                  last_name:
+                    example: MENDOZA MIRANDA
+                    type: string
+                  name:
+                    example: EDMILSON YASSIR
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 9d75e76f-eaed-4cbd-8d43-26330add53f7
+                type: string
+            type: object
+      tags:
+        - Request for Identity Documents
+      description: Get RUC information.
+      operationId: getruc
+      summary: getRUC
+  /skus:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              EstimatedDateArrival:
+                example: '2024-12-31'
+                type: string
+              Height:
+                example: 10
+                type: number
+              Length:
+                example: 20
+                type: number
+              ManufacturerCode:
+                example: ManuCode789
+                type: string
+              PackagedHeight:
+                example: 12
+                type: number
+              PackagedLength:
+                example: 22
+                type: number
+              PackagedWeightGr:
+                example: 2.5
+                type: number
+              PackagedWidth:
+                example: 6
+                type: number
+              WeightGr:
+                example: 1.2
+                type: number
+              Width:
+                example: 5
+                type: number
+              ean:
+                example: '1234567890123'
+                type: string
+              images:
+                example:
+                  - description: Vista frontal del producto
+                    fileName: image1.jpg
+                    url: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                  - description: Vista lateral del producto
+                    fileName: image2.jpg
+                    url: https://www.abene.com.mx/cdn/shop/articles/shutterstock_388440550.jpg
+                items:
+                  properties:
+                    description:
+                      example: Vista frontal del producto
+                      type: string
+                    fileName:
+                      example: image1.jpg
+                      type: string
+                    url:
+                      example: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                      type: string
+                  type: object
+                type: array
+              name:
+                example: Producto 1234 - 01
+                type: string
+              productId:
+                example: PROD1234
+                type: string
+              skuId:
+                example: PROD1234-01
+                type: string
+              videoUrl:
+                example:
+                  - http://example.com/video1.mp4
+                  - http://example.com/video2.mp4
+                items:
+                  example: http://example.com/video1.mp4
+                  type: string
+                type: array
+            type: object
+      responses:
+        '200':
+          description: createSkus - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  ActivateIfPossible:
+                    example: true
+                    type: boolean
+                  CommercialConditionId:
+                    example: 1
+                    type: number
+                  CreationDate:
+                    example: '2024-08-02T18:39:48.1582026'
+                    type: string
+                  CubicWeight:
+                    example: 0
+                    type: number
+                  EstimatedDateArrival:
+                    example: '2024-12-31T00:00:00'
+                    type: string
+                  Height:
+                    example: 10
+                    type: number
+                  Id:
+                    example: 959
+                    type: number
+                  IsActive:
+                    example: false
+                    type: boolean
+                  IsKit:
+                    example: false
+                    type: boolean
+                  KitItensSellApart:
+                    example: false
+                    type: boolean
+                  Length:
+                    example: 20
+                    type: number
+                  ManufacturerCode:
+                    example: ManuCode789
+                    type: string
+                  MeasurementUnit:
+                    example: un
+                    type: string
+                  ModalType:
+                    example: null
+                    x-nullable: true
+                  Name:
+                    example: Super dddsss sku25
+                    type: string
+                  PackagedHeight:
+                    example: 12
+                    type: number
+                  PackagedLength:
+                    example: 22
+                    type: number
+                  PackagedWeightKg:
+                    example: 2.5
+                    type: number
+                  PackagedWidth:
+                    example: 6
+                    type: number
+                  ProductId:
+                    example: 18055
+                    type: number
+                  RefId:
+                    example: popopop223223
+                    type: string
+                  RewardValue:
+                    example: null
+                    x-nullable: true
+                  UnitMultiplier:
+                    example: 1
+                    type: number
+                  Videos:
+                    example:
+                      - http://example.com/video1.mp4
+                      - http://example.com/video2.mp4
+                    items:
+                      example: http://example.com/video1.mp4
+                      type: string
+                    type: array
+                  WeightKg:
+                    example: 1.2
+                    type: number
+                  Width:
+                    example: 5
+                    type: number
+                  imagesFailed:
+                    example: []
+                    items: {}
+                    type: array
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 2c574ff0-2cb0-4aeb-9534-6b17994dc150
+                type: string
+            type: object
+        '400':
+          description: createSkus - 400 no images data
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - fileName: El nombre del archivo debe ser alfanumérico y puede incluir guiones y puntos pero no espacios., fileName should not be empty, fileName must be a string
+                      - url: url should not be empty, url must be a string
+                      - description: description should not be empty, description must be a string
+                    items:
+                      properties:
+                        description:
+                          example: description should not be empty, description must be a string
+                          type: string
+                        fileName:
+                          example: El nombre del archivo debe ser alfanumérico y puede incluir guiones y puntos pero no espacios., fileName should not be empty, fileName must be a string
+                          type: string
+                        url:
+                          example: url should not be empty, url must be a string
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 945ade42-5125-4199-be13-db62e57f0fc7
+                type: string
+            type: object
+        '401':
+          description: createSkus - 400 existe
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example: SKU already exists in VTEX
+                    type: string
+                  statusCode:
+                    example: 401
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 49da9410-c2bd-4b11-9b1c-5bd712c91f5e
+                type: string
+            type: object
+      tags:
+        - SKU
+      description: Creates a new SKU in the VTEX system. This endpoint allows clients to add a new stock keeping unit (SKU) by providing the necessary information and attributes for the SKU.
+      operationId: createskus
+      summary: createSkus
+  /skus/bulk/:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            example:
+              - EstimatedDateArrival: '2024-12-31'
+                Height: 10
+                Length: 20
+                ManufacturerCode: ManuCode789
+                PackagedHeight: 12
+                PackagedLength: 22
+                PackagedWeightGr: 2.5
+                PackagedWidth: 6
+                WeightGr: 1.2
+                Width: 5
+                ean: '1234567890123'
+                images:
+                  - description: Vista frontal del producto
+                    fileName: image1.jpg
+                    url: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                  - description: Vista lateral del producto
+                    fileName: image2.jpg
+                    url: https://www.abene.com.mx/cdn/shop/articles/shutterstock_388440550.jpg
+                name: Producto 1234 - 01
+                productId: PROD1234
+                skuId: PROD1234-01
+                videoUrl:
+                  - http://example.com/video1.mp4
+                  - http://example.com/video2.mp4
+              - EstimatedDateArrival: '2024-12-31'
+                Height: 10
+                Length: 20
+                ManufacturerCode: ManuCode789
+                PackagedHeight: 12
+                PackagedLength: 22
+                PackagedWeightGr: 2.5
+                PackagedWidth: 6
+                WeightGr: 1.2
+                Width: 5
+                ean: '1234567890123'
+                images:
+                  - description: Vista frontal del producto
+                    fileName: image1.jpg
+                    url: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                  - description: Vista lateral del producto
+                    fileName: image2.jpg
+                    url: https://www.abene.com.mx/cdn/shop/articles/shutterstock_388440550.jpg
+                name: Producto 1234 - 02
+                productId: PROD1234
+                skuId: PROD1234-02
+                videoUrl:
+                  - http://example.com/video1.mp4
+                  - http://example.com/video2.mp4
+            items:
+              properties:
+                EstimatedDateArrival:
+                  example: '2024-12-31'
+                  type: string
+                Height:
+                  example: 10
+                  type: number
+                Length:
+                  example: 20
+                  type: number
+                ManufacturerCode:
+                  example: ManuCode789
+                  type: string
+                PackagedHeight:
+                  example: 12
+                  type: number
+                PackagedLength:
+                  example: 22
+                  type: number
+                PackagedWeightGr:
+                  example: 2.5
+                  type: number
+                PackagedWidth:
+                  example: 6
+                  type: number
+                WeightGr:
+                  example: 1.2
+                  type: number
+                Width:
+                  example: 5
+                  type: number
+                ean:
+                  example: '1234567890123'
+                  type: string
+                images:
+                  example:
+                    - description: Vista frontal del producto
+                      fileName: image1.jpg
+                      url: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                    - description: Vista lateral del producto
+                      fileName: image2.jpg
+                      url: https://www.abene.com.mx/cdn/shop/articles/shutterstock_388440550.jpg
+                  items:
+                    properties:
+                      description:
+                        example: Vista frontal del producto
+                        type: string
+                      fileName:
+                        example: image1.jpg
+                        type: string
+                      url:
+                        example: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                        type: string
+                    type: object
+                  type: array
+                name:
+                  example: Producto 1234 - 01
+                  type: string
+                productId:
+                  example: PROD1234
+                  type: string
+                skuId:
+                  example: PROD1234-01
+                  type: string
+                videoUrl:
+                  example:
+                    - http://example.com/video1.mp4
+                    - http://example.com/video2.mp4
+                  items:
+                    example: http://example.com/video1.mp4
+                    type: string
+                  type: array
+              type: object
+            type: array
+      responses:
+        '200':
+          description: createBulkSkus - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  message:
+                    example: The bulk update request has been received. You will receive the results by email.
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 4c04b0f7-3113-46a9-8dfe-7ca192d06ff6
+                type: string
+            type: object
+      tags:
+        - SKU
+      description: Creates multiple new SKUs in the VTEX system in bulk. This endpoint allows clients to add several SKUs simultaneously by providing the required information and attributes for each SKU in a batch.
+      operationId: createbulkskus
+      summary: createBulkSkus
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            example:
+              - EstimatedDateArrival: '2024-12-31'
+                Height: 10
+                Length: 20
+                ManufacturerCode: ManuCode789
+                PackagedHeight: 12
+                PackagedLength: 22
+                PackagedWeightGr: 2.5
+                PackagedWidth: 6
+                WeightGr: 1.2
+                Width: 5
+                ean: '1234567890123'
+                images:
+                  - description: Vista frontal del producto
+                    fileName: image1.jpg
+                    url: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                  - description: Vista lateral del producto
+                    fileName: image2.jpg
+                    url: https://www.abene.com.mx/cdn/shop/articles/shutterstock_388440550.jpg
+                name: Producto 1234 - 01
+                productId: PROD1234
+                skuId: PROD1234-01
+                videoUrl:
+                  - http://example.com/video1.mp4
+                  - http://example.com/video2.mp4
+              - EstimatedDateArrival: '2024-12-31'
+                Height: 10
+                Length: 20
+                ManufacturerCode: ManuCode789
+                PackagedHeight: 12
+                PackagedLength: 22
+                PackagedWeightGr: 2.5
+                PackagedWidth: 6
+                WeightGr: 1.2
+                Width: 5
+                ean: '1234567890123'
+                images:
+                  - description: Vista frontal del producto
+                    fileName: image1.jpg
+                    url: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                  - description: Vista lateral del producto
+                    fileName: image2.jpg
+                    url: https://www.abene.com.mx/cdn/shop/articles/shutterstock_388440550.jpg
+                name: Producto 1234 - 02
+                productId: PROD1234
+                skuId: PROD1234-02
+                videoUrl:
+                  - http://example.com/video1.mp4
+                  - http://example.com/video2.mp4
+            items:
+              properties:
+                EstimatedDateArrival:
+                  example: '2024-12-31'
+                  type: string
+                Height:
+                  example: 10
+                  type: number
+                Length:
+                  example: 20
+                  type: number
+                ManufacturerCode:
+                  example: ManuCode789
+                  type: string
+                PackagedHeight:
+                  example: 12
+                  type: number
+                PackagedLength:
+                  example: 22
+                  type: number
+                PackagedWeightGr:
+                  example: 2.5
+                  type: number
+                PackagedWidth:
+                  example: 6
+                  type: number
+                WeightGr:
+                  example: 1.2
+                  type: number
+                Width:
+                  example: 5
+                  type: number
+                ean:
+                  example: '1234567890123'
+                  type: string
+                images:
+                  example:
+                    - description: Vista frontal del producto
+                      fileName: image1.jpg
+                      url: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                    - description: Vista lateral del producto
+                      fileName: image2.jpg
+                      url: https://www.abene.com.mx/cdn/shop/articles/shutterstock_388440550.jpg
+                  items:
+                    properties:
+                      description:
+                        example: Vista frontal del producto
+                        type: string
+                      fileName:
+                        example: image1.jpg
+                        type: string
+                      url:
+                        example: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                        type: string
+                    type: object
+                  type: array
+                name:
+                  example: Producto 1234 - 01
+                  type: string
+                productId:
+                  example: PROD1234
+                  type: string
+                skuId:
+                  example: PROD1234-01
+                  type: string
+                videoUrl:
+                  example:
+                    - http://example.com/video1.mp4
+                    - http://example.com/video2.mp4
+                  items:
+                    example: http://example.com/video1.mp4
+                    type: string
+                  type: array
+              type: object
+            type: array
+      responses:
+        '200':
+          description: updateBulkSkus - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  message:
+                    example: The bulk update request has been received. You will receive the results by email.
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: cd723850-4eaa-42d6-ba92-72e3e6e45142
+                type: string
+            type: object
+      tags:
+        - SKU
+      description: Updates the information of multiple SKUs in the VTEX system in bulk. This endpoint allows clients to modify the details and attributes of several SKUs simultaneously, identified by their IDs, facilitating efficient and large-scale SKU management.
+      operationId: updatebulkskus
+      summary: updateBulkSkus
+  /skus/{skuId}:
+    parameters:
+      - in: path
+        name: skuId
+        required: true
+        type: string
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              EstimatedDateArrival:
+                example: '2024-12-31'
+                type: string
+              Height:
+                example: 10
+                type: number
+              Length:
+                example: 20
+                type: number
+              ManufacturerCode:
+                example: ManuCode789
+                type: string
+              PackagedHeight:
+                example: 12
+                type: number
+              PackagedLength:
+                example: 22
+                type: number
+              PackagedWeightGr:
+                example: 2.5
+                type: number
+              PackagedWidth:
+                example: 6
+                type: number
+              WeightGr:
+                example: 1.2
+                type: number
+              Width:
+                example: 5
+                type: number
+              ean:
+                example: '1234567890123'
+                type: string
+              images:
+                example:
+                  - description: Vista frontal del producto
+                    fileName: image1.jpg
+                    url: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                  - description: Vista lateral del producto
+                    fileName: image2.jpg
+                    url: https://www.abene.com.mx/cdn/shop/articles/shutterstock_388440550.jpg
+                items:
+                  properties:
+                    description:
+                      example: Vista frontal del producto
+                      type: string
+                    fileName:
+                      example: image1.jpg
+                      type: string
+                    url:
+                      example: https://dam.ngenespanol.com/wp-content/uploads/2021/09/GettyImages-999657272.jpg
+                      type: string
+                  type: object
+                type: array
+              name:
+                example: Producto 1234 - 01
+                type: string
+              productId:
+                example: PROD1234
+                type: string
+              skuId:
+                example: PROD1234-01
+                type: string
+              videoUrl:
+                example:
+                  - http://example.com/video1.mp4
+                  - http://example.com/video2.mp4
+                items:
+                  example: http://example.com/video1.mp4
+                  type: string
+                type: array
+            type: object
+      responses:
+        '200':
+          description: updateSkus - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  ActivateIfPossible:
+                    example: true
+                    type: boolean
+                  CommercialConditionId:
+                    example: 1
+                    type: number
+                  CreationDate:
+                    example: '2024-07-21T12:17:00'
+                    type: string
+                  CubicWeight:
+                    example: 0
+                    type: number
+                  EstimatedDateArrival:
+                    example: '2024-08-02T21:40:32'
+                    type: string
+                  Height:
+                    example: null
+                    x-nullable: true
+                  Id:
+                    example: 860
+                    type: number
+                  IsActive:
+                    example: false
+                    type: boolean
+                  IsKit:
+                    example: false
+                    type: boolean
+                  KitItensSellApart:
+                    example: false
+                    type: boolean
+                  Length:
+                    example: null
+                    x-nullable: true
+                  ManufacturerCode:
+                    example: null
+                    x-nullable: true
+                  MeasurementUnit:
+                    example: un
+                    type: string
+                  ModalType:
+                    example: null
+                    x-nullable: true
+                  Name:
+                    example: Sunflower Dress (Vestido Girasol)
+                    type: string
+                  PackagedHeight:
+                    example: 15
+                    type: number
+                  PackagedLength:
+                    example: 27
+                    type: number
+                  PackagedWeightKg:
+                    example: 3500
+                    type: number
+                  PackagedWidth:
+                    example: 8
+                    type: number
+                  ProductId:
+                    example: 18131
+                    type: number
+                  RefId:
+                    example: '2005522'
+                    type: string
+                  RewardValue:
+                    example: null
+                    x-nullable: true
+                  UnitMultiplier:
+                    example: 1
+                    type: number
+                  Videos:
+                    example: []
+                    items: {}
+                    type: array
+                  WeightKg:
+                    example: null
+                    x-nullable: true
+                  Width:
+                    example: null
+                    x-nullable: true
+                  imagesFailed:
+                    example: []
+                    items: {}
+                    type: array
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 1f5bc8c7-2a82-400a-b9c7-8f8581508ec4
+                type: string
+            type: object
+        '400':
+          description: updateSkus - 400 no data
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - productId: productId must be a string, productId should not be empty
+                      - name: name must be a string, name should not be empty
+                      - PackagedHeight: PackagedHeight must be a number conforming to the specified constraints, PackagedHeight should not be empty
+                      - PackagedLength: PackagedLength must be a number conforming to the specified constraints, PackagedLength should not be empty
+                      - PackagedWidth: PackagedWidth must be a number conforming to the specified constraints, PackagedWidth should not be empty
+                      - PackagedWeightGr: PackagedWeightGr must be a number conforming to the specified constraints, PackagedWeightGr should not be empty
+                    items:
+                      properties:
+                        PackagedHeight:
+                          example: PackagedHeight must be a number conforming to the specified constraints, PackagedHeight should not be empty
+                          type: string
+                        PackagedLength:
+                          example: PackagedLength must be a number conforming to the specified constraints, PackagedLength should not be empty
+                          type: string
+                        PackagedWeightGr:
+                          example: PackagedWeightGr must be a number conforming to the specified constraints, PackagedWeightGr should not be empty
+                          type: string
+                        PackagedWidth:
+                          example: PackagedWidth must be a number conforming to the specified constraints, PackagedWidth should not be empty
+                          type: string
+                        name:
+                          example: name must be a string, name should not be empty
+                          type: string
+                        productId:
+                          example: productId must be a string, productId should not be empty
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 6d8207d4-37fe-4d53-aed0-003d77177668
+                type: string
+            type: object
+      tags:
+        - SKU
+      description: Updates the information of an existing SKU in the VTEX system. This endpoint allows clients to modify the details and attributes of a single SKU identified by its ID.
+      operationId: updateskus
+      summary: updateSkus
+  /stock:
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              isUnlimited:
+                example: false
+                type: boolean
+              quantity:
+                example: 10
+                type: number
+              skuId:
+                example: PDQ
+                type: string
+              warehouseId:
+                example: ALMALI
+                type: string
+            type: object
+      responses:
+        '200':
+          description: updateStock - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  dataStock:
+                    properties:
+                      dateUtcOnBalanceSystem:
+                        example: null
+                        x-nullable: true
+                      isUnlimited:
+                        example: false
+                        type: boolean
+                      leadTime:
+                        example: null
+                        x-nullable: true
+                      quantity:
+                        example: 10
+                        type: number
+                      skuId:
+                        example: 879
+                        type: number
+                      warehouseId:
+                        example: ALMHUANYSUR
+                        type: string
+                    type: object
+                  message:
+                    example: Successfully updated stock
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: a8e671d8-03b7-4a53-9013-0b00f1d7f59e
+                type: string
+            type: object
+        '400':
+          description: updateStock - 400
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example: SKU not found
+                    type: string
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: a8aad8ca-2326-4267-9969-4b32ebaadc70
+                type: string
+            type: object
+      tags:
+        - Stock
+      description: Updates the stock level of a specific product in the VTEX system. This endpoint allows clients to modify the inventory quantity of a single sku identified by its ID.
+      operationId: updatestock
+      summary: updateStock
+  /stock/bulk:
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            example:
+              - isUnlimited: false
+                quantity: 10
+                skuId: '125478'
+                warehouseId: ALMALI
+              - isUnlimited: false
+                quantity: 10
+                skuId: 151D4LT
+                warehouseId: ALMALI
+              - isUnlimited: false
+                quantity: 10
+                skuId: '019495'
+                warehouseId: ALMALI
+              - isUnlimited: false
+                quantity: 10
+                skuId: G10-F
+                warehouseId: ALMALI
+            items:
+              properties:
+                isUnlimited:
+                  example: false
+                  type: boolean
+                quantity:
+                  example: 10
+                  type: number
+                skuId:
+                  example: '125478'
+                  type: string
+                warehouseId:
+                  example: ALMALI
+                  type: string
+              type: object
+            type: array
+      responses:
+        '200':
+          description: updateBulkStock - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  message:
+                    example: The bulk update request has been received. You will receive the results by email.
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 6a754ab6-e3f9-47d6-959c-1622f6d2a5b1
+                type: string
+            type: object
+      tags:
+        - Stock
+      description: Updates the stock levels of multiple sku in the VTEX system in bulk. This endpoint allows clients to modify the inventory quantities for a batch of products, facilitating efficient and large-scale stock adjustments.
+      operationId: updatebulkstock
+      summary: updateBulkStock
+  /token:
+    post:
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: grant_type
+          type: string
+      responses:
+        '200':
+          description: generateToken
+          headers:
+            Cache-Control:
+              type: string
+            Connection:
+              type: string
+            Date:
+              type: string
+            Expires:
+              type: string
+            Pragma:
+              type: string
+            Server:
+              type: string
+            Set-Cookie:
+              type: string
+            Strict-Transport-Security:
+              type: string
+            Transfer-Encoding:
+              type: string
+            X-Content-Type-Options:
+              type: string
+            X-Frame-Options:
+              type: string
+            X-XSS-Protection:
+              type: string
+            x-amz-cognito-request-id:
+              type: string
+          schema:
+            properties:
+              access_token:
+                example: eyJraWQiOiIxeDRKNlwvNjZDc2VHNzRGQ2p1R0dTV016STM1WG1ndE5vMzFFRE11OHFOaz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2dG5jajA3OXRkcmJxZmdhZGwzczg3NTVmNCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiaW50ZXJwcmV0ZXJcL3JlYWQiLCJhdXRoX3RpbWUiOjE3MjMwMDExMzMsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX3p3aXFIWHlQZiIsImV4cCI6MTcyMzA4NzUzMywiaWF0IjoxNzIzMDAxMTMzLCJ2ZXJzaW9uIjoyLCJqdGkiOiJjNzhmNmQ4NS0xNDQ5LTQ3MGMtYmI0OC1iMGZhNjg1ODJjYjQiLCJjbGllbnRfaWQiOiI2dG5jajA3OXRkcmJxZmdhZGwzczg3NTVmNCJ9.5PkRefFMHYjJ3ORsvNSXa1pq8UjS5LouQ0WhJ3u7MC5JAu0iMXNxUc3aUzKQp-YFMcm_p88COu0nVIgq1b7vu2uZl0do41S3Q2aySsnNT8Q4-Reg_fc3BGr5VF6k3P2zPkxGy9Tv05lCfJIUG71mmfKYx6cKkUNLCGsvjPRoSrpvuFu1FBxwTvxtiIPmHR9D6tPWtIVY-W9BElaQ5rUIf2s73EzsDxuzoEtLwFDRiUvFXrE2fWJn2pnW5OrgUJveR_OqQqwMZpayX-689s1l5iV50fy36KuNpE61fjaLoGlQhvV-Cm_6n-iapkSRS82d2hwe5n9r4y40pGxSdYbpZw
+                type: string
+              expires_in:
+                example: 86400
+                type: number
+              token_type:
+                example: Bearer
+                type: string
+            type: object
+      tags:
+        - Auth
+      description: Authenticates a user in the Cognito system using a username and password. This endpoint allows clients to perform user login by validating the provided credentials against the Cognito user pool, ensuring secure access to the system's resources.
+      operationId: generatetoken
+      summary: generateToken
+  /warehouse/:
+    put:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: account
+          type: string
+        - in: body
+          name: body
+          schema:
+            properties:
+              isActive:
+                example: false
+                type: boolean
+              name:
+                example: Almacen Lima
+                type: string
+              warehouseId:
+                example: ALMLIM
+                type: string
+            type: object
+      responses:
+        '200':
+          description: createAndUpdateWarehouse - 200
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              data:
+                properties:
+                  dataWarehouse:
+                    properties:
+                      id:
+                        example: ALM
+                        type: string
+                      name:
+                        example: TESTTEST
+                        type: string
+                    type: object
+                  message:
+                    example: Successfully create/updated warehouse
+                    type: string
+                type: object
+              success:
+                example: true
+                type: boolean
+              traceId:
+                example: 6bade9c6-9319-4966-97e2-8a0813ba0b8d
+                type: string
+            type: object
+        '400':
+          description: createAndUpdateWarehouse - 400
+          headers:
+            Connection:
+              type: string
+            Content-Length:
+              type: string
+            Date:
+              type: string
+            X-Amzn-Trace-Id:
+              type: string
+            access-control-allow-credentials:
+              type: string
+            etag:
+              type: string
+            vary:
+              type: string
+            x-amz-apigw-id:
+              type: string
+            x-amzn-Remapped-content-length:
+              type: string
+            x-amzn-Remapped-date:
+              type: string
+            x-amzn-Remapped-server:
+              type: string
+            x-amzn-RequestId:
+              type: string
+            x-envoy-upstream-service-time:
+              type: string
+            x-powered-by:
+              type: string
+          schema:
+            properties:
+              error:
+                properties:
+                  message:
+                    example:
+                      - warehouseId: Warehouse ID can only contain alphanumeric characters and commas, Warehouse ID cannot be empty, Warehouse ID must be a string
+                      - name: Name can only contain alphanumeric characters, spaces, commas, and accents, Name cannot be empty, Name must be a string
+                    items:
+                      properties:
+                        name:
+                          example: Name can only contain alphanumeric characters, spaces, commas, and accents, Name cannot be empty, Name must be a string
+                          type: string
+                        warehouseId:
+                          example: Warehouse ID can only contain alphanumeric characters and commas, Warehouse ID cannot be empty, Warehouse ID must be a string
+                          type: string
+                      type: object
+                    type: array
+                  statusCode:
+                    example: 400
+                    type: number
+                type: object
+              success:
+                example: false
+                type: boolean
+              traceId:
+                example: 126deb34-a1d9-4b9d-b61b-f9b70457f29e
+                type: string
+            type: object
+      tags:
+        - Warehouse
+      description: createAndUpdateWarehouse
+      operationId: createandupdatewarehouse
+      summary: createAndUpdateWarehouse
+tags:
+  - description: This API manages brand information. It allows creating, updating, retrieving, and deleting brands, as well as listing all available brands in the system.
+    name: Brand
+  - description: This API handles product pricing information. It allows managing prices for different products and retrieving price history.
+    name: Price
+  - description: This API controls product inventory levels. It facilitates updating and querying stock availability in various warehouses.
+    name: Stock
+  - description: This API manages product categories. It allows creating, updating, retrieving, and deleting categories, as well as organizing them hierarchically.
+    name: Categories
+  - description: This API handles purchase order management. It allows creating, updating, retrieving, and deleting orders, as well as providing information about the order status.
+    name: Orders
+  - description: This API handles requests for identity documents such as DNI or RUC.
+    name: Request for Identity Documents
+  - description: This API manages warehouse information. It allows creating, updating, retrieving, and deleting warehouses, as well as managing inventory within each warehouse.
+    name: Warehouse
+  - description: This API manages product information. It allows creating, updating, retrieving, and deleting products, as well as managing their attributes and relationships with categories and brands.
+    name: Product
+  - description: This API handles stock keeping unit (SKU) codes for products. It allows creating, updating, retrieving, and deleting SKUs, as well as managing their specific attributes.
+    name: SKU
+  - name: Auth
